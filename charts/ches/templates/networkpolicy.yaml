@@ -1,0 +1,121 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app.kubernetes.io/component: app
+  app.kubernetes.io/instance: "${APP_NAME}-${JOB_NAME}"
+  app.kubernetes.io/managed-by: githubactions
+  app: "${APP_NAME}-${JOB_NAME}"
+  template: "networkpolicy-template"
+metadata:
+  name: "networkpolicy-template"
+objects:
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: allow-all-in-namespace
+      labels:
+        {{- include "ches.labels" . | nindent 4 }}
+    spec:
+      podSelector: {}
+      ingress:
+        - from:
+            - podSelector: {}
+      policyTypes:
+        - Ingress
+
+  # - apiVersion: networking.k8s.io/v1
+  #   kind: NetworkPolicy
+  #   metadata:
+  #     name: allow-openshift-ingress-to-{{ include "ches.fullname" . }}-app
+  #     labels:
+  #       {{- include "ches.labels" . | nindent 4 }}
+  #   spec:
+  #     ingress:
+  #       - from:
+  #           - namespaceSelector:
+  #               matchLabels:
+  #                 network.openshift.io/policy-group: ingress
+  #         ports:
+  #           - port: {{ default "8080" .Values.config.configMap.SERVER_PORT | atoi }}
+  #             protocol: TCP
+  #     podSelector:
+  #       matchLabels: {{- include "ches.selectorLabels" . | nindent 6 }}
+
+  # - apiVersion: networking.k8s.io/v1
+  #   kind: NetworkPolicy
+  #   metadata:
+  #     name: allow-openshift-ingress-to-${APP_NAME}-app-${JOB_NAME}
+  #   spec:
+  #     ingress:
+  #       - from:
+  #           - namespaceSelector:
+  #               matchLabels:
+  #                 network.openshift.io/policy-group: ingress
+  #         ports:
+  #           - port: 3000
+  #             protocol: TCP
+  #     podSelector:
+  #       matchLabels:
+  #         app: "${APP_NAME}-${JOB_NAME}"
+  #         deploymentconfig: "${APP_NAME}-app-${JOB_NAME}"
+  #         role: app
+  # - apiVersion: networking.k8s.io/v1
+  #   kind: NetworkPolicy
+  #   metadata:
+  #     name: "allow-${APP_NAME}-app-${JOB_NAME}-to-patroni-${JOB_NAME}-cluster"
+  #   spec:
+  #     # Allow app to talk to Patroni cluster
+  #     ingress:
+  #       - from:
+  #           - podSelector:
+  #               matchLabels:
+  #                 app: "${APP_NAME}-${JOB_NAME}"
+  #                 deploymentconfig: "${APP_NAME}-app-${JOB_NAME}"
+  #                 role: app
+  #         ports:
+  #           - port: 5432
+  #             protocol: TCP
+  #     podSelector:
+  #       matchLabels:
+  #         cluster-name: "${JOB_NAME}"
+  #         statefulset: "patroni-${JOB_NAME}"
+  #         role: master
+  # - apiVersion: networking.k8s.io/v1
+  #   kind: NetworkPolicy
+  #   metadata:
+  #     name: "allow-pre-hook-to-patroni-${JOB_NAME}-cluster"
+  #   spec:
+  #     # Allow app pre-hook pods to talk to Patroni cluster
+  #     ingress:
+  #       - from:
+  #           - podSelector:
+  #               matchLabels:
+  #                 openshift.io/deployer-pod.type: hook-pre
+  #         ports:
+  #           - port: 5432
+  #             protocol: TCP
+  #     podSelector:
+  #       matchLabels:
+  #         cluster-name: "${JOB_NAME}"
+  #         statefulset: "patroni-${JOB_NAME}"
+  #         role: master
+  # - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: "allow-${APP_NAME}-app-${JOB_NAME}-to-redis-${JOB_NAME}"
+    spec:
+      # Allow app to talk to Redis
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  app: "${APP_NAME}-${JOB_NAME}"
+                  deploymentconfig: "${APP_NAME}-app-${JOB_NAME}"
+                  role: app
+          ports:
+            - port: 6379
+              protocol: TCP
+      podSelector:
+        matchLabels:
+          app: {{.Release.Name}}-redis
+          role: redis
