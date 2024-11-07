@@ -1,19 +1,25 @@
----
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  app: "${APP_NAME}-${JOB_NAME}"
-  template: "${REPO_NAME}-app-dc-template"
+  app.kubernetes.io/component: app
+  template: "config-template"
 metadata:
-  name: "${REPO_NAME}-app-dc"
+  name: "config-template"
 objects:
+  {{- if .Values.config.enabled }}
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ include "ches.configname" . }}-config
+      annotations:
+        "helm.sh/resource-policy": keep
+    data: {{ toYaml .Values.config.configMap | nindent 6 }}
+  {{- end }}
   - apiVersion: v1
     kind: ConfigMap
     metadata:
       name: fluent-bit-config
-      namespace: ${NAMESPACE}
     data:
-      # Configuration files: server, input, filters and output
       fluent-bit.conf: |
         [SERVICE]
           Flush        5
@@ -52,7 +58,7 @@ objects:
           # add pod name
           Record  hostname ${HOSTNAME}
           # add productname (eg: 'cdogs')
-          Record  product ${APP_NAME}
+          Record  product ches
           # add namespace
           Record namespace ${NAMESPACE}
 
@@ -89,22 +95,6 @@ objects:
           Time_Key time
           Time_Format %d/%b/%Y:%H:%M:%S %z
 parameters:
-  - name: APP_NAME
-    description: Application name
-    displayName: Application name
-    required: true
-  - name: REPO_NAME
-    description: Application repository name
-    displayName: Repository Name
-    required: true
-  - name: JOB_NAME
-    description: Job identifier (i.e. 'pr-5' OR 'master')
-    displayName: Job Branch Name
-    required: true
-  - name: NAMESPACE
-    description: Target namespace reference (i.e. 'b160aa-dev')
-    displayName: Target Namespace
-    required: true
   - name: LOGGING_HOST_NAME
     description: The hostname of our FLuentd service running further down the monitoring pipeline
     displayName: Logging host name
