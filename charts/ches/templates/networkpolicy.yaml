@@ -1,0 +1,21 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app.kubernetes.io/component: app
+  template: "networkpolicy-template"
+metadata:
+  name: "networkpolicy-template"
+objects:
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: allow-all-in-namespace
+      labels:
+        {{- include "ches.labels" . | nindent 4 }}
+    spec:
+      podSelector: {}
+      ingress:
+        - from:
+            - podSelector: {}
+      policyTypes:
+        - Ingress
