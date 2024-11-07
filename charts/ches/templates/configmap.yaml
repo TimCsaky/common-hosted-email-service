@@ -1,12 +1,28 @@
----
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
+  app.kubernetes.io/component: app
+  app.kubernetes.io/instance: "${APP_NAME}-${JOB_NAME}"
+  app.kubernetes.io/managed-by: githubactions
   app: "${APP_NAME}-${JOB_NAME}"
-  template: "${REPO_NAME}-app-dc-template"
+  template: "config-template"
 metadata:
-  name: "${REPO_NAME}-app-dc"
+  name: "config-template"
 objects:
+
+  {{- if .Values.config.enabled }}
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ include "ches.configname" . }}-config
+      {{- if not .Values.config.releaseScoped }}
+      annotations:
+        "helm.sh/resource-policy": keep
+      {{- end }}
+    data: {{ toYaml .Values.config.configMap | nindent 2 }}
+  {{- end }}
+
+  # fluent-bit
   - apiVersion: v1
     kind: ConfigMap
     metadata:
@@ -89,22 +105,6 @@ objects:
           Time_Key time
           Time_Format %d/%b/%Y:%H:%M:%S %z
 parameters:
-  - name: APP_NAME
-    description: Application name
-    displayName: Application name
-    required: true
-  - name: REPO_NAME
-    description: Application repository name
-    displayName: Repository Name
-    required: true
-  - name: JOB_NAME
-    description: Job identifier (i.e. 'pr-5' OR 'master')
-    displayName: Job Branch Name
-    required: true
-  - name: NAMESPACE
-    description: Target namespace reference (i.e. 'b160aa-dev')
-    displayName: Target Namespace
-    required: true
   - name: LOGGING_HOST_NAME
     description: The hostname of our FLuentd service running further down the monitoring pipeline
     displayName: Logging host name

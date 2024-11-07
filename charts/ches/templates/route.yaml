@@ -1,0 +1,37 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app.kubernetes.io/component: app
+  app.kubernetes.io/instance: "${APP_NAME}-${JOB_NAME}"
+  app.kubernetes.io/managed-by: githubactions
+  app: "${APP_NAME}-${JOB_NAME}"
+  template: "route-template"
+metadata:
+  name: "route-template"
+objects:
+
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: {{ include "ches.fullname" . }}
+      labels:
+        {{- include "ches.labels" . | nindent 4 }}
+      {{- with .Values.route.annotations }}
+      annotations:
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    spec:
+      host: {{ .Values.route.host | quote }}
+      {{- if .Values.route.path }}
+      path: {{ .Values.route.path }}
+      {{- end }}
+      port:
+        targetPort: {{ .Values.service.portName }}
+      tls:
+        insecureEdgeTerminationPolicy: {{ .Values.route.tls.insecureEdgeTerminationPolicy }}
+        termination: {{ .Values.route.tls.termination }}
+      to:
+        kind: Service
+        name: {{ include "ches.fullname" . }}
+        weight: 100
+      wildcardPolicy: {{ .Values.route.wildcardPolicy }}

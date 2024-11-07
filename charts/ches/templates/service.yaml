@@ -1,0 +1,42 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app.kubernetes.io/component: app
+  app.kubernetes.io/instance: "${APP_NAME}-${JOB_NAME}"
+  app.kubernetes.io/managed-by: githubactions
+  app: "${APP_NAME}-${JOB_NAME}"
+  template: "service-template"
+metadata:
+  name: "service-template"
+objects:
+
+  # - apiVersion: v1
+  #   kind: Service
+  #   metadata:
+  #     name: "${APP_NAME}-app-${JOB_NAME}"
+  #   spec:
+  #     ports:
+  #       - name: 3000-tcp
+  #         port: 3000
+  #         protocol: TCP
+  #         targetPort: 3000
+  #     selector:
+  #       app: "${APP_NAME}-${JOB_NAME}"
+  #       deploymentconfig: "${APP_NAME}-app-${JOB_NAME}"
+  #       role: app
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ include "ches.fullname" . }}
+      labels:
+        {{- include "ches.labels" . | nindent 4 }}
+    spec:
+      type: {{ .Values.service.type }}
+      ports:
+        - name: {{ .Values.service.portName }}
+          port: {{ .Values.service.port }}
+          protocol: TCP
+          targetPort: {{ .Values.service.port }}
+      selector:
+        {{- include "ches.selectorLabels" . | nindent 4 }}
