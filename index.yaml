@@ -3,6 +3,45 @@ entries:
   common-hosted-email-service:
   - apiVersion: v2
     appVersion: 0.8.0
+    created: "2024-11-08T00:19:42.5170401Z"
+    dependencies:
+    - alias: postgres
+      condition: postgres.enabled
+      name: postgrescluster
+      repository: file://../postgres
+      version: 2.0.0
+    - alias: redis
+      condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.0.3
+    description: A microservice for managing access control to S3 Objects
+    digest: 8fbfb3e0d6c1870975f4090d51a3fac15d29c0e5647083202cb1232c4323906a
+    home: https://bcgov.github.io/common-hosted-email-service
+    keywords:
+    - nodejs
+    - javascript
+    - docker
+    - microservice
+    - s3
+    - document-management
+    - access-control
+    - object-storage
+    - domo
+    kubeVersion: '>= 1.13.0'
+    maintainers:
+    - email: NR.CommonServiceShowcase@gov.bc.ca
+      name: NR Common Service Showcase Team
+      url: https://bcgov.github.io/common-service-showcase/team.html
+    name: common-hosted-email-service
+    sources:
+    - https://github.com/bcgov/common-hosted-email-service
+    type: application
+    urls:
+    - https://github.com/TimCsaky/common-hosted-email-service/releases/download/common-hosted-email-service-0.0.3/common-hosted-email-service-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.8.0
     created: "2024-11-08T00:15:10.52174227Z"
     dependencies:
     - alias: postgres
@@ -90,4 +129,4 @@ entries:
     urls:
     - https://github.com/TimCsaky/common-hosted-email-service/releases/download/postgrescluster-2.0.0/postgrescluster-2.0.0.tgz
     version: 2.0.0
-generated: "2024-11-08T00:15:10.632166027Z"
+generated: "2024-11-08T00:19:42.625249254Z"
