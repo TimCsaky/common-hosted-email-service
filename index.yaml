@@ -3,6 +3,45 @@ entries:
   common-hosted-email-service:
   - apiVersion: v2
     appVersion: 0.8.0
+    created: "2024-11-13T00:00:41.499641324Z"
+    dependencies:
+    - alias: postgres
+      condition: postgres.enabled
+      name: postgrescluster
+      repository: file://../postgres
+      version: 2.0.1
+    - alias: redis
+      condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.0.3
+    description: A microservice for managing access control to S3 Objects
+    digest: 047c77dd7836a049f2659955a1e6665237fe02b6b852c06bb2ab673dee3d53da
+    home: https://bcgov.github.io/common-hosted-email-service
+    keywords:
+    - nodejs
+    - javascript
+    - docker
+    - microservice
+    - s3
+    - document-management
+    - access-control
+    - object-storage
+    - domo
+    kubeVersion: '>= 1.13.0'
+    maintainers:
+    - email: NR.CommonServiceShowcase@gov.bc.ca
+      name: NR Common Service Showcase Team
+      url: https://bcgov.github.io/common-service-showcase/team.html
+    name: common-hosted-email-service
+    sources:
+    - https://github.com/bcgov/common-hosted-email-service
+    type: application
+    urls:
+    - https://github.com/TimCsaky/common-hosted-email-service/releases/download/common-hosted-email-service-0.1.9/common-hosted-email-service-0.1.9.tgz
+    version: 0.1.9
+  - apiVersion: v2
+    appVersion: 0.8.0
     created: "2024-11-12T23:45:55.64701722Z"
     dependencies:
     - alias: postgres
@@ -823,6 +862,16 @@ entries:
   postgrescluster:
   - apiVersion: v2
     appVersion: 5.5.1
+    created: "2024-11-13T00:00:41.599751467Z"
+    description: A Helm chart for Kubernetes
+    digest: efb57ad751090df617996b104104fb84cfa999bdbb8ed31fd2d3cf56dde9a242
+    name: postgrescluster
+    type: application
+    urls:
+    - https://github.com/TimCsaky/common-hosted-email-service/releases/download/postgrescluster-2.0.1/postgrescluster-2.0.1.tgz
+    version: 2.0.1
+  - apiVersion: v2
+    appVersion: 5.5.1
     created: "2024-11-07T23:16:00.160395765Z"
     description: A Helm chart for Kubernetes
     digest: 5f2d1ed080796c8bdcef03a6569402a00196be8b6ffce4be61611d85d043645f
@@ -831,4 +880,4 @@ entries:
     urls:
     - https://github.com/TimCsaky/common-hosted-email-service/releases/download/postgrescluster-2.0.0/postgrescluster-2.0.0.tgz
     version: 2.0.0
-generated: "2024-11-12T23:45:55.757666132Z"
+generated: "2024-11-13T00:00:41.599916556Z"
