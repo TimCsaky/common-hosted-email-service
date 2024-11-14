@@ -8,7 +8,7 @@
 {{- define "ches.connectsTo" -}}
 apiVersion: apps/v1
 kind: StatefulSet
-name: {{ printf "%s-%s" "postgres-master" }}
+name: {{ printf "%s-%s" "postgres" "master" }}
 {{- end }}
 ---
 apiVersion: apps.openshift.io/v1
@@ -133,7 +133,7 @@ spec:
                   key: password
                   name: ches-keycloak-secret
             - name: REDIS_HOST
-              value: {{.Release.Name}}-redis
+              value: {{ printf "%s-%s" "redis" .Release.Name }}
             - name: SERVER_LOGFILE
               value: "/var/log/app.log"
           envFrom:
